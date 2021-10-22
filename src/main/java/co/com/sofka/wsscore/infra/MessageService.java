@@ -1,9 +1,11 @@
 package co.com.sofka.wsscore.infra;
 
-import co.com.sofka.wsscore.usecases.ExtractScoreUseCase;
+import co.com.sofka.wsscore.domain.generic.Command;
+import co.com.sofka.wsscore.infra.generic.CommandSerializer;
 import com.rabbitmq.client.*;
 import io.quarkiverse.rabbitmqclient.RabbitMQClient;
 import io.quarkus.runtime.StartupEvent;
+import io.vertx.mutiny.core.eventbus.EventBus;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -16,13 +18,13 @@ public class MessageService {
     private static final String EXCHANGE = "executor";
     private static final String QUEUE = "executor.queue";
 
-    private final ExtractScoreUseCase extractScoreUseCase;
+    private final EventBus bus;
     private final RabbitMQClient rabbitMQClient;
 
     private Channel channel;
 
-    public MessageService(ExtractScoreUseCase extractScoreUseCase, RabbitMQClient rabbitMQClient) {
-        this.extractScoreUseCase = extractScoreUseCase;
+    public MessageService(EventBus bus, RabbitMQClient rabbitMQClient) {
+        this.bus = bus;
         this.rabbitMQClient = rabbitMQClient;
     }
 
@@ -48,12 +50,12 @@ public class MessageService {
             channel.basicConsume(QUEUE, true, new DefaultConsumer(channel) {
                 @Override
                 public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-                   var pathIdentity = new String(body, StandardCharsets.UTF_8);
-                    System.out.println(pathIdentity);
+                   var message = new String(body, StandardCharsets.UTF_8);
                     try {
-                        var extractor = extractScoreUseCase.apply(pathIdentity);
-                        System.out.println(extractor);
-                    } catch (RuntimeException e){
+                        var command = CommandSerializer.instance()
+                                .deserialize(message, Class.forName(properties.getContentType()));
+                        bus.publish("executor-command", command);
+                    } catch (ClassNotFoundException e) {
                         e.printStackTrace();
                     }
 
@@ -64,10 +66,11 @@ public class MessageService {
         }
     }
 
-    public void send(String message) {
+    public void send(Command command) {
         try {
-            System.out.println("send...");
-            channel.basicPublish(EXCHANGE, "code", null, message.getBytes(StandardCharsets.UTF_8));
+            var message = CommandSerializer.instance().serialize(command);
+            var props = new AMQP.BasicProperties.Builder().contentType(command.getClass().getTypeName()).build();
+            channel.basicPublish(EXCHANGE, "code", props, message.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
