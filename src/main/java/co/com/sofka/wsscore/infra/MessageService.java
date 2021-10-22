@@ -39,7 +39,7 @@ public class MessageService {
             channel = connection.createChannel();
             channel.exchangeDeclare(EXCHANGE, BuiltinExchangeType.TOPIC, true);
             channel.queueDeclare(QUEUE, true, false, false, null);
-            channel.queueBind(QUEUE, EXCHANGE, "code");
+            channel.queueBind(QUEUE, EXCHANGE, "executor-command");
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -70,7 +70,7 @@ public class MessageService {
         try {
             var message = CommandSerializer.instance().serialize(command);
             var props = new AMQP.BasicProperties.Builder().contentType(command.getClass().getTypeName()).build();
-            channel.basicPublish(EXCHANGE, "code", props, message.getBytes(StandardCharsets.UTF_8));
+            channel.basicPublish(EXCHANGE, "executor-command", props, message.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
