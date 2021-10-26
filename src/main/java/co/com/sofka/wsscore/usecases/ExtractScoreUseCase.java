@@ -20,25 +20,25 @@ import java.util.function.Function;
 public class ExtractScoreUseCase implements Function<AssignScoreCommand, List<DomainEvent>> {
     private static final String URL_BASE = "https://campus.sofka.com.co";
     private final ProcessLogin processLogin;
-    private final EventStoreRepository eventStoreRepository;
+    private final EventStoreRepository repository;
 
-    public ExtractScoreUseCase(ProcessLogin processLogin, EventStoreRepository eventStoreRepository){
+    public ExtractScoreUseCase(ProcessLogin processLogin, EventStoreRepository repository){
         this.processLogin = processLogin;
-        this.eventStoreRepository = eventStoreRepository;
+        this.repository = repository;
     }
 
     @Override
     public List<DomainEvent> apply(AssignScoreCommand command) {
         processLogin.login();
         var program = Program.from(command.getProgramId(),
-                eventStoreRepository.getEventsBy("program", command.getProgramId())
+                repository.getEventsBy("program", command.getProgramId())
         );
         try {
             Connection.Response response = getResponse(command.getPath());
             processLogin.logout();
             new Gson().fromJson(response.body(), DataResponse.class).getData().stream()
                     .filter(d -> d.get(5).contains("Terminado"))
-                    .forEach(data -> program.assignScore(html2text(data.get(0)), data.get(6), new Date()));
+                    .forEach(data -> program.assignScore(html2text(data.get(0)), command.getCourseId(), command.getCategory(),  data.get(6), new Date()));
             return program.getUncommittedChanges();
         } catch (IOException e) {
            throw new ExtractScoreException();

@@ -4,6 +4,8 @@ import co.com.sofka.wsscore.domain.generic.Command;
 
 public class AssignScoreCommand extends Command {
     private  String programId;
+    private  String courseId;
+    private  String category;
     private  String path;
 
     public String getProgramId() {
@@ -20,5 +22,21 @@ public class AssignScoreCommand extends Command {
 
     public void setProgramId(String programId) {
         this.programId = programId;
+    }
+
+    public String getCourseId() {
+        return courseId;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public void setCourseId(String courseId) {
+        this.courseId = courseId;
     }
 }

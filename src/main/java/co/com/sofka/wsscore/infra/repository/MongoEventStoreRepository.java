@@ -16,6 +16,5 @@ public class MongoEventStoreRepository implements EventStoreRepository {
 
     @Override
     public void saveEvent(String aggregateName, String aggregateRootId, StoredEvent storedEvent) {
-
     }
 }

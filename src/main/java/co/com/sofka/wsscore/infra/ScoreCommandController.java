@@ -3,6 +3,7 @@ package co.com.sofka.wsscore.infra;
 
 import co.com.sofka.wsscore.domain.generic.Command;
 import co.com.sofka.wsscore.domain.program.command.AssignScoreCommand;
+import co.com.sofka.wsscore.domain.program.command.CreateProgramCommand;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -25,5 +26,14 @@ public class ScoreCommandController {
         messageService.send(command);
         return Response.ok().build();
     }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/command")
+    public Response executor(CreateProgramCommand command) {
+        messageService.send(command);
+        return Response.ok().build();
+    }
+
 
 }

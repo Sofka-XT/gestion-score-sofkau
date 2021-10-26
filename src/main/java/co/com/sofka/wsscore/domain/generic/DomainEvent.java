@@ -1,33 +1,30 @@
 package co.com.sofka.wsscore.domain.generic;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.UUID;
 
-public abstract class DomainEvent {
-    private String type;
-    private Instant instant;
+public abstract class DomainEvent implements Serializable {
+    private final String type;
+    private final Instant instant;
     private String aggregateId;
     private final String id;
 
-    public DomainEvent(){
+    public DomainEvent(String type){
         this.id = UUID.randomUUID().toString();
+        this.type = type;
+        this.instant = Instant.now();
     }
 
     public String getType() {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
 
     public Instant getInstant() {
         return instant;
     }
 
-    public void setInstant(Instant instant) {
-        this.instant = instant;
-    }
 
     public  void setAggregateId(String aggregateId){
         this.aggregateId = aggregateId;

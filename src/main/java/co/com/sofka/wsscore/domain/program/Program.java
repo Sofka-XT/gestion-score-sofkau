@@ -3,35 +3,48 @@ package co.com.sofka.wsscore.domain.program;
 import co.com.sofka.wsscore.domain.generic.AggregateRoot;
 import co.com.sofka.wsscore.domain.generic.DomainEvent;
 import co.com.sofka.wsscore.domain.generic.EventChange;
-import co.com.sofka.wsscore.domain.program.event.CourseAndCategoryAssigned;
+import co.com.sofka.wsscore.domain.program.event.CourseAssigned;
+import co.com.sofka.wsscore.domain.program.event.ProgramCreated;
 import co.com.sofka.wsscore.domain.program.event.ScoreAssigned;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
+import java.util.*;
 
 
 public class Program extends AggregateRoot implements EventChange {
-    private  String course;
-    private  String category;
+    private Map<String, Course> courses;
     private Map<String, Score> scores;
+    private String name;
 
-    public Program(String id, String course, String category){
-        super(id);
-        appendChange(new CourseAndCategoryAssigned(course, category)).apply();
+    public Program(String programId, String name){
+        super(programId);
+        appendChange(new ProgramCreated(name)).apply();
     }
+
+
+    public void addCourse(String courseId, List<String> categories){
+        appendChange(new CourseAssigned(courseId, categories)).apply();
+    }
+
+    public void assignScore(String user, String courseId, String category, String value, Date date){
+        appendChange(new ScoreAssigned(user, courseId, category, value, date)).apply();
+    }
+
 
     private Program(String id){
         super(id);
         subscribe(this);
-        listener((Consumer<CourseAndCategoryAssigned>) event -> {
-            this.course = event.getCourse();
-            this.category = event.getCategory();
+        listener((ProgramCreated event)-> {
+          this.name = event.getName();
+          this.scores = new HashMap<>();
+          this.courses =  new HashMap<>();
         });
-        listener((Consumer<ScoreAssigned>) event -> {
-            this.scores.put(event.getUser(), new Score(
-                    event.getUser(), event.getValue(), event.getDate()
+        listener((CourseAssigned event) -> {
+            courses.put(event.getCourseId(), new Course(event.getCourseId(), event.getCategories()));
+        });
+        listener((ScoreAssigned event) -> {
+            var scoreId = event.getCourseId() +event.getCategory()+event.getUser();
+            this.scores.put(scoreId, new Score(
+                    scoreId, event.getUser(), event.getValue(), event.getDate()
             ));
         });
 
@@ -43,16 +56,16 @@ public class Program extends AggregateRoot implements EventChange {
         return program;
     }
 
-    public void assignScore(String user, String value, Date date){
-        appendChange(new ScoreAssigned(user, value, date)).apply();
+    public String name() {
+        return name;
     }
 
-    public String course() {
-        return course;
+    public Course getCoursesById(String courseId) {
+        return courses.get(courseId);
     }
 
-    public String category() {
-        return category;
+    public Score getScoreByCourseIdAndCategoryAndUser(String courseId, String category, String user){
+        return this.scores.get(courseId+category+user);
     }
 
     public Map<String, Score> scores() {
