@@ -32,7 +32,16 @@ public class MessageService {
     }
 
     public void onApplicationStart(@Observes StartupEvent event) throws IOException {
-        setupQueues();
+        Connection connection = rabbitMQClient.connect();
+        channel = connection.createChannel();
+        channel.exchangeDeclare(EXCHANGE, BuiltinExchangeType.TOPIC, true);
+        //for command
+        channel.queueDeclare(EXECUTOR_QUEUE, true, false, false, null);
+        channel.queueBind(EXECUTOR_QUEUE, EXCHANGE, "executor-command");
+        //for event
+        channel.queueDeclare(EVENT_QUEUE, true, false, false, null);
+        channel.queueBind(EVENT_QUEUE, EXCHANGE, "trigger-event");
+
         channel.basicConsume(EXECUTOR_QUEUE, true, setupReceivingForCommand());
         channel.basicConsume(EVENT_QUEUE, true, setupReceivingForEvent());
     }
@@ -53,21 +62,7 @@ public class MessageService {
         };
     }
 
-    private void setupQueues() {
-        try {
-            Connection connection = rabbitMQClient.connect();
-            channel = connection.createChannel();
-            channel.exchangeDeclare(EXCHANGE, BuiltinExchangeType.TOPIC, true);
-            //for command
-            channel.queueDeclare(EXECUTOR_QUEUE, true, false, false, null);
-            channel.queueBind(EXECUTOR_QUEUE, EXCHANGE, "executor-command");
-            //for event
-            channel.queueDeclare(EVENT_QUEUE, true, false, false, null);
-            channel.queueBind(EVENT_QUEUE, EXCHANGE, "trigger-event");
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
+
 
     private DefaultConsumer setupReceivingForCommand() {
         return new DefaultConsumer(channel) {

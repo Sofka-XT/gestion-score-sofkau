@@ -26,7 +26,7 @@ public class MongoEventStoreRepository implements EventStoreRepository {
     public List<DomainEvent> getEventsBy(String aggregateName, String aggregateRootId) {
         List<DomainEvent> events = new ArrayList<>();
         //TODO: ordenar por fecha
-         mongoClient.getDatabase("score")
+         mongoClient.getDatabase("command")
                 .getCollection(aggregateName)
                 .find(eq("aggregateId", aggregateRootId))
                 .map((Function<Document, DomainEvent>) document -> {
@@ -52,6 +52,6 @@ public class MongoEventStoreRepository implements EventStoreRepository {
         document.put("typeName", storedEvent.getTypeName());
         document.put("eventBody", storedEvent.getEventBody());
 
-        mongoClient.getDatabase("score").getCollection(aggregateName).insertOne(new Document(document));
+        mongoClient.getDatabase("command").getCollection(aggregateName).insertOne(new Document(document));
     }
 }

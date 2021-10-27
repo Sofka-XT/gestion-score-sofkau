@@ -24,6 +24,7 @@ public class ScoreCommandController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/assignScore")
     public Response executor(AssignScoreCommand command) {
+        System.out.println("Executor command "+command.getType());
         messageService.send(command);
         return Response.ok().build();
     }
@@ -32,6 +33,7 @@ public class ScoreCommandController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/createProgram")
     public Response executor(CreateProgramCommand command) {
+        System.out.println("Executor command "+command.getType());
         messageService.send(command);
         return Response.ok().build();
     }
