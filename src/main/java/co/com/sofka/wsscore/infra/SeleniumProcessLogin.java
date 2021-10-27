@@ -23,8 +23,9 @@ public class SeleniumProcessLogin implements ProcessLogin {
     public void login() {
         if(!isLogin) {
             driver.get(URL_BASE + "/index");
-            driver.findElement(By.name("login")).sendKeys("raul.alzate@sofka.com.co");
-            driver.findElement(By.name("password")).sendKeys("Rauloko250360.");
+            //TODO: cambiar por su correo
+            driver.findElement(By.name("login")).sendKeys("");
+            driver.findElement(By.name("password")).sendKeys("");
             driver.findElement(By.name("submit")).click();
             isLogin = true;
         }
