@@ -8,6 +8,10 @@ public class AssignScoreCommand extends Command {
     private  String category;
     private  String path;
 
+    public AssignScoreCommand(){
+
+    }
+
     public String getProgramId() {
         return programId;
     }

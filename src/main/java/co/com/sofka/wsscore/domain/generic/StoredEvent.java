@@ -9,6 +9,7 @@ import java.util.Date;
 
 public final class StoredEvent {
 
+
     private String eventBody;
     private Date occurredOn;
     private String typeName;

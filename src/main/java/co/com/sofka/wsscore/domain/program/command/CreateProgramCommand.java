@@ -6,6 +6,10 @@ public class CreateProgramCommand extends Command {
     private String programId;
     private String name;
 
+    public CreateProgramCommand(){
+
+    }
+
     public String getProgramId() {
         return programId;
     }
