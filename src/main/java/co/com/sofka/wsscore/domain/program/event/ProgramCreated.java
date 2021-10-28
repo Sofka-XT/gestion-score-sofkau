@@ -2,8 +2,6 @@ package co.com.sofka.wsscore.domain.program.event;
 
 import co.com.sofka.wsscore.domain.generic.DomainEvent;
 
-import java.util.List;
-
 public class ProgramCreated extends DomainEvent {
 
     private final String name;
