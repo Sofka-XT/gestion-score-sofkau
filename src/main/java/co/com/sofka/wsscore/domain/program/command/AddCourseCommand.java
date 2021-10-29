@@ -7,6 +7,7 @@ import java.util.List;
 public class AddCourseCommand  extends Command {
     private String programId;
     private  String courseId;
+    private String name;
     private List<String> categories;
 
     public AddCourseCommand(){
@@ -34,5 +35,13 @@ public class AddCourseCommand  extends Command {
 
     public void setCategories(List<String> categories) {
         this.categories = categories;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

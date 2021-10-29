@@ -1,14 +1,17 @@
 package co.com.sofka.wsscore.domain.program;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class Course {
     private final String id;
+    private final String name;
     private List<String> categories;
 
-    public Course( String id, List<String> category) {
-        this.categories = Objects.requireNonNull(category);
+    public Course( String id, String name) {
+        this.categories = new ArrayList<>();
+        this.name = Objects.requireNonNull(name);
         this.id = Objects.requireNonNull(id);
     }
 
@@ -22,6 +25,10 @@ public class Course {
 
     public String id() {
         return id;
+    }
+
+    public String name() {
+        return name;
     }
 
     @Override

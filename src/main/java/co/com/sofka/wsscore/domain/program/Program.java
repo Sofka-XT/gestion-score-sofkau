@@ -21,8 +21,8 @@ public class Program extends AggregateRoot implements EventChange {
     }
 
 
-    public void addCourse(String courseId, List<String> categories){
-        appendChange(new CourseAssigned(courseId, categories)).apply();
+    public void addCourse(String courseId, String name, List<String> categories){
+        appendChange(new CourseAssigned(courseId, name, categories)).apply();
     }
 
     public void assignScore(String user, String courseId, String category, String value, Date date){
@@ -39,7 +39,9 @@ public class Program extends AggregateRoot implements EventChange {
           this.courses =  new HashMap<>();
         });
         listener((CourseAssigned event) -> {
-            courses.put(event.getCourseId(), new Course(event.getCourseId(), event.getCategories()));
+            var course =  new Course(event.getCourseId(), event.getName());
+            event.getCategories().forEach(course::addCategory);
+            courses.put(event.getCourseId(), course);
         });
         listener((ScoreAssigned event) -> {
             var scoreId = event.getCourseId() +event.getCategory()+event.getUser();

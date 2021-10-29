@@ -23,7 +23,7 @@ public class AddCourseUseCase implements Function<AddCourseCommand, List<DomainE
         var program = Program.from(
                 addCourseCommand.getProgramId(), repository.getEventsBy("program", addCourseCommand.getProgramId())
         );
-        program.addCourse(addCourseCommand.getCourseId(), addCourseCommand.getCategories());
+        program.addCourse(addCourseCommand.getCourseId(), addCourseCommand.getName(), addCourseCommand.getCategories());
         return program.getUncommittedChanges();
     }
 }
