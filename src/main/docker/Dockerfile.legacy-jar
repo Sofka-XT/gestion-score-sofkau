@@ -7,7 +7,7 @@
 #
 # Then, build the image with:
 #
-# docker build -f src/main/docker/Dockerfile.legacy-jar -t quarkus/code-with-quarkus-legacy-jar .
+# docker build -f src/main/docker/Dockerfile.legacy-jar -t ralzate/demo-cqrs .
 #
 # Then run the container using:
 #
