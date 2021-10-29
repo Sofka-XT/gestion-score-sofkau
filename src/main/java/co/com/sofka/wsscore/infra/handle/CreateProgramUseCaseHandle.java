@@ -16,7 +16,7 @@ public class CreateProgramUseCaseHandle extends UseCaseHandle {
         this.createProgramUseCase = createProgramUseCase;
     }
 
-    @ConsumeEvent(value = "sofkau.program.createprogram", blocking = true)
+    @ConsumeEvent(value = "sofkau.program.createprogram")
     void consumeBlocking(CreateProgramCommand command) {
         var events = createProgramUseCase.apply(command);
         saveProgram(command.getProgramId(), events);

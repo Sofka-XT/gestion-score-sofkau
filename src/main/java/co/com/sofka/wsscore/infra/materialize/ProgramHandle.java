@@ -2,6 +2,7 @@ package co.com.sofka.wsscore.infra.materialize;
 
 import co.com.sofka.wsscore.domain.program.event.CourseAssigned;
 import co.com.sofka.wsscore.domain.program.event.ProgramCreated;
+import co.com.sofka.wsscore.domain.program.event.ScoreAssigned;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.model.Filters;
@@ -37,7 +38,11 @@ public class ProgramHandle {
     void consumeProgramCreated(CourseAssigned event) {
         BasicDBObject document = new BasicDBObject();
         document.put("courses."+event.getCourseId()+".name", event.getName());
-        document.put("courses."+event.getCourseId()+".categories", event.getCategories());
+
+        event.getCategories().forEach(category -> {
+            var key = "courses."+event.getCourseId()+".categories."+Math.abs(category.hashCode());
+            document.put(key+".name", category);
+        });
 
         BasicDBObject updateObject = new BasicDBObject();
         updateObject.put("$set", document);
@@ -48,4 +53,19 @@ public class ProgramHandle {
     }
 
 
+    @ConsumeEvent(value = "sofkau.program.scoreassigned", blocking = true)
+    void consumeProgramCreated(ScoreAssigned event) {
+        BasicDBObject document = new BasicDBObject();
+        var key = "courses."+event.getCourseId()+".categories."+Math.abs(event.getCategory().hashCode());
+        document.put(key+".scores."+Math.abs(event.getUser().hashCode())+".user", event.getUser());
+        document.put(key+".scores."+Math.abs(event.getUser().hashCode())+".value", event.getValue());
+        document.put(key+".scores."+Math.abs(event.getUser().hashCode())+".date", event.getDate());
+
+        BasicDBObject updateObject = new BasicDBObject();
+        updateObject.put("$set", document);
+
+        mongoClient.getDatabase("queries")
+                .getCollection("program")
+                .updateOne( Filters.eq("_id", event.getAggregateId()), updateObject);
+    }
 }

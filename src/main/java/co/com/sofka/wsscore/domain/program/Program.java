@@ -44,7 +44,7 @@ public class Program extends AggregateRoot implements EventChange {
             courses.put(event.getCourseId(), course);
         });
         listener((ScoreAssigned event) -> {
-            var scoreId = event.getCourseId() +event.getCategory()+event.getUser();
+            var scoreId = event.getCourseId()+event.getCategory()+event.getUser();
             this.scores.put(scoreId, new Score(
                     scoreId, event.getUser(), event.getValue(), event.getDate()
             ));
