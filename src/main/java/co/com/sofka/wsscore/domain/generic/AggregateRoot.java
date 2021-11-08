@@ -20,9 +20,9 @@ public abstract class AggregateRoot {
         return appendChange(event, id);
     }
 
-    protected ChangeEventSubscriber.ChangeApply appendChange(DomainEvent event, String id) {
+    protected ChangeEventSubscriber.ChangeApply appendChange(DomainEvent event, String correlationId) {
         event.setAggregateId(id);
-        event.setCorrelationId(id);
+        event.setCorrelationId(correlationId);
         return changeEventSubscriber.appendChange(event);
     }
 

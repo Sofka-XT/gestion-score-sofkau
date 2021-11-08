@@ -2,7 +2,6 @@ package co.com.sofka.wsscore.domain.program;
 
 import co.com.sofka.wsscore.domain.generic.AggregateRoot;
 import co.com.sofka.wsscore.domain.generic.DomainEvent;
-import co.com.sofka.wsscore.domain.generic.EventChange;
 import co.com.sofka.wsscore.domain.program.event.CourseAssigned;
 import co.com.sofka.wsscore.domain.program.event.ProgramCreated;
 import co.com.sofka.wsscore.domain.program.event.ScoreAssigned;
@@ -18,16 +17,16 @@ public class Program extends AggregateRoot  {
     public Program(String programId, String name){
         super(programId);
         subscribe(new ProgramEventChange(this));
-        appendChange(new ProgramCreated(name), "xxx").apply();
+        appendChange(new ProgramCreated(name)).apply();
     }
 
 
     public void addCourse(String courseId, String name, List<String> categories){
-        appendChange(new CourseAssigned(courseId, name, categories), "xxx").apply();
+        appendChange(new CourseAssigned(courseId, name, categories)).apply();
     }
 
     public void assignScore(String user, String courseId, String category, String value, Date date){
-        appendChange(new ScoreAssigned(user, courseId, category, value, date), "xxx").apply();
+        appendChange(new ScoreAssigned(user, courseId, category, value, date)).apply();
     }
 
 
