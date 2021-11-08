@@ -10,47 +10,32 @@ import co.com.sofka.wsscore.domain.program.event.ScoreAssigned;
 import java.util.*;
 
 
-public class Program extends AggregateRoot implements EventChange {
-    private Map<String, Course> courses;
-    private Map<String, Score> scores;
-    private String name;
+public class Program extends AggregateRoot  {
+    protected Map<String, Course> courses;
+    protected Map<String, Score> scores;
+    protected String name;
 
     public Program(String programId, String name){
         super(programId);
-        appendChange(new ProgramCreated(name)).apply();
+        subscribe(new ProgramEventChange(this));
+        appendChange(new ProgramCreated(name), "xxx").apply();
     }
 
 
     public void addCourse(String courseId, String name, List<String> categories){
-        appendChange(new CourseAssigned(courseId, name, categories)).apply();
+        appendChange(new CourseAssigned(courseId, name, categories), "xxx").apply();
     }
 
     public void assignScore(String user, String courseId, String category, String value, Date date){
-        appendChange(new ScoreAssigned(user, courseId, category, value, date)).apply();
+        appendChange(new ScoreAssigned(user, courseId, category, value, date), "xxx").apply();
     }
 
 
     private Program(String id){
         super(id);
-        subscribe(this);
-        listener((ProgramCreated event)-> {
-          this.name = event.getName();
-          this.scores = new HashMap<>();
-          this.courses =  new HashMap<>();
-        });
-        listener((CourseAssigned event) -> {
-            var course =  new Course(event.getCourseId(), event.getName());
-            event.getCategories().forEach(course::addCategory);
-            courses.put(event.getCourseId(), course);
-        });
-        listener((ScoreAssigned event) -> {
-            var scoreId = event.getCourseId()+event.getCategory()+event.getUser();
-            this.scores.put(scoreId, new Score(
-                    scoreId, event.getUser(), event.getValue(), event.getDate()
-            ));
-        });
-
+        subscribe(new ProgramEventChange(this));
     }
+
 
     public static Program from(String id, List<DomainEvent> events){
         var program = new Program(id);

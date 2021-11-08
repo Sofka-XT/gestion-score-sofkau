@@ -1,4 +1,4 @@
-package co.com.sofka.wsscore.infra;
+package co.com.sofka.wsscore.infra.service;
 
 import co.com.sofka.wsscore.usecases.ProcessLogin;
 import org.openqa.selenium.By;

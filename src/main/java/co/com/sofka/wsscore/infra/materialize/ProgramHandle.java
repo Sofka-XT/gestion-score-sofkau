@@ -35,7 +35,7 @@ public class ProgramHandle {
     }
 
     @ConsumeEvent(value = "sofkau.program.courseassigned", blocking = true)
-    void consumeProgramCreated(CourseAssigned event) {
+    void consumeCourseAssigned(CourseAssigned event) {
         BasicDBObject document = new BasicDBObject();
         document.put("courses."+event.getCourseId()+".name", event.getName());
 
@@ -54,7 +54,7 @@ public class ProgramHandle {
 
 
     @ConsumeEvent(value = "sofkau.program.scoreassigned", blocking = true)
-    void consumeProgramCreated(ScoreAssigned event) {
+    void consumeScoreAssigned(ScoreAssigned event) {
         BasicDBObject document = new BasicDBObject();
         var key = "courses."+event.getCourseId()+".categories."+Math.abs(event.getCategory().hashCode());
         document.put(key+".scores."+Math.abs(event.getUser().hashCode())+".user", event.getUser());

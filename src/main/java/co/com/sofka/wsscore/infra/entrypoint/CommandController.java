@@ -1,4 +1,4 @@
-package co.com.sofka.wsscore.infra;
+package co.com.sofka.wsscore.infra.entrypoint;
 
 
 import co.com.sofka.wsscore.domain.program.command.AddCourseCommand;

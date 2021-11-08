@@ -1,4 +1,4 @@
-package co.com.sofka.wsscore.infra;
+package co.com.sofka.wsscore.infra.entrypoint;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.model.Filters;

@@ -4,12 +4,11 @@ import co.com.sofka.wsscore.domain.generic.DomainEvent;
 import co.com.sofka.wsscore.domain.generic.EventStoreRepository;
 import co.com.sofka.wsscore.domain.program.command.AssignScoreCommand;
 import co.com.sofka.wsscore.domain.program.Program;
-import co.com.sofka.wsscore.infra.DataResponse;
+import co.com.sofka.wsscore.infra.model.DataResponse;
 import com.google.gson.Gson;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 import java.io.IOException;
 import java.util.Date;

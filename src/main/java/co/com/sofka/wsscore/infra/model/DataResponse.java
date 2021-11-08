@@ -1,4 +1,4 @@
-package co.com.sofka.wsscore.infra;
+package co.com.sofka.wsscore.infra.model;
 
 import java.util.List;
 
